@@ -60,12 +60,12 @@ while True:
     img_HSV=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
     img_gray=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
     
-    img_yellow=detect_yollow(img_HSV)
+    img_yellow=detect_yollow(img_HSV)  #HSV영역에서 Yollow색 영역만 추출
 
     img_canny_1=cv2.Canny(img_gray,150,300)
     img_canny_2=cv2.Canny(img_yellow,75,150)
 
-    img_canny=cv2.addWeighted(img_canny_1,1.0,img_canny_2,1.0,0)
+    img_canny=cv2.addWeighted(img_canny_1,1.0,img_canny_2,1.0,0) #그레이 스케일 엣지 + HSV 스케일 엣지
 
     img_roi_L=roi_L(img_canny)
     img_roi_R=roi_R(img_canny)
@@ -74,7 +74,7 @@ while True:
 
     
 
-    lines=cv2.HoughLinesP(img_roi,1,np.pi/180,25,minLineLength=1,maxLineGap=210)
+    lines=cv2.HoughLinesP(img_roi,1,np.pi/180,25,minLineLength=1,maxLineGap=210) #확률 허브 변환을 통한 차선 후보
 
     line_img=np.zeros((img_roi.shape[0],img_roi.shape[1],3),dtype=np.uint8)
 
@@ -82,7 +82,7 @@ while True:
     else:
         for line in lines:
             for x1,y1,x2,y2 in line:
-                if ((70<np.abs(np.arctan2(y2-y1,x2-x1))*180)/np.pi):
+                if ((70<np.abs(np.arctan2(y2-y1,x2-x1))*180)/np.pi): #line 후보중 각도가 70도 이상만 출력
                     cv2.line(line_img,(x1,y1),(x2,y2),(0,0,255),3)
                 else:
                     continue
